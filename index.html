@@ -61,6 +61,8 @@ button:active{transform:scale(.97)}
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded",()=>{
+
 /* ===== FREE SESSIONS ===== */
 const MAX_FREE=3;
 let used=Number(localStorage.getItem("calm_sessions")||0);
@@ -68,7 +70,7 @@ let used=Number(localStorage.getItem("calm_sessions")||0);
 /* ===== AUDIO ===== */
 let audioCtx,masterGain;
 function startAudio(){
-  if(audioCtx) return; // already started
+  if(audioCtx) return;
   audioCtx=new (window.AudioContext||webkitAudioContext)();
   masterGain=audioCtx.createGain();
   masterGain.gain.value=.03;
@@ -103,10 +105,18 @@ const nextBtn=document.getElementById("next");
 nextBtn.addEventListener("click",()=>{
   if(used>=MAX_FREE){showPaywall();return;}
   startAudio();
-  if(index===-1){used++;localStorage.setItem("calm_sessions",used);nextBtn.innerText="Next"}
-  index=Math.min(index+1,games.length-1);
-  games[index]();
-  if(index>=games.length-1){nextBtn.classList.add("hidden")}
+  if(index===-1){
+    used++;
+    localStorage.setItem("calm_sessions",used);
+    nextBtn.innerText="Next";
+  }
+  index++;
+  if(index<games.length){
+    games[index]();
+  } else {
+    gameEl.innerHTML="Stay as long as you like.";
+    nextBtn.classList.add("hidden");
+  }
 });
 
 /* ===== PAYWALL ===== */
@@ -147,7 +157,7 @@ let t=0;
     ctx.beginPath();
     ctx.moveTo(0,c.height*(0.35+i*0.25));
     for(let x=0;x<c.width;x+=60){
-      ctx.lineTo(x,c.height*(0.35+i*0.25)+Math.sin(x*0.002+t*2+i)*60);
+      ctx.lineTo(x,c.height*(0.35+i*0.25)+Math.sin(x*.002+t*2+i)*60);
     }
     ctx.strokeStyle="rgba(111,211,196,.16)";
     ctx.lineWidth=120;
@@ -155,6 +165,7 @@ let t=0;
   }
   requestAnimationFrame(draw);
 })();
+});
 </script>
 </body>
 </html>
